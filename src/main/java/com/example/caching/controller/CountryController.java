@@ -2,19 +2,22 @@ package com.example.caching.controller;
 
 
 import com.example.caching.dto.RequestCountryDTO;
-import com.example.caching.dto.ResponseCountryDTO;
+
 import com.example.caching.model.Country;
 import com.example.caching.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +32,19 @@ public class CountryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Country>> getAll() throws InterruptedException {
+    public ResponseEntity<List<Country>> getAll() {
         return ResponseEntity.ok().body(service.getAll());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Country> getById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(service.getById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Country> update(@PathVariable Long id, @RequestBody RequestCountryDTO newName) {
+        return ResponseEntity.ok().body(service.update(id, newName.title()));
+    }
 }
+
+
