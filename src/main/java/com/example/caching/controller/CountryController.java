@@ -24,26 +24,26 @@ import java.util.List;
 @RequestMapping("/api/v1/countries")
 public class CountryController {
 
-    private final CountryService service;
+    private final CountryService countryService;
 
     @PostMapping
     public ResponseEntity<Country> create(@RequestBody RequestCountryDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto.title()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(countryService.create(dto.title()));
     }
 
     @GetMapping
     public ResponseEntity<List<Country>> getAll() {
-        return ResponseEntity.ok().body(service.getAll());
+        return ResponseEntity.ok().body(countryService.getAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Country> getById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(service.getById(id));
+        return ResponseEntity.ok().body(countryService.getById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Country> update(@PathVariable Long id, @RequestBody RequestCountryDTO newName) {
-        return ResponseEntity.ok().body(service.update(id, newName.title()));
+        return ResponseEntity.ok().body(countryService.update(id, newName.title()));
     }
 }
 
