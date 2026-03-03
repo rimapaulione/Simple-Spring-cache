@@ -1,6 +1,5 @@
 package com.example.caching.service;
 
-
 import com.example.caching.event.ProductEvent;
 import com.example.caching.model.Product;
 import com.example.caching.model.PurchaseStatus;
@@ -9,7 +8,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher publisher;
+    private final ProductCache productCache;
 
     @Transactional
     public Product create(final String name, final Double price, final Integer quantity) {
@@ -27,7 +31,7 @@ public class ProductService {
                 .quantity(quantity)
                 .build());
         log.info("Product was created");
-        ProductCache.put(product.getId(), product);
+        productCache.put(product.getId(), product);
 
 
         publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.ADDED));
@@ -35,18 +39,19 @@ public class ProductService {
         return product;
     }
 
-    public Product get(final Long id) {
-
-        Product productFromCache = ProductCache.get(id);
-
-        if (productFromCache != null) {
-            log.info("Product returned form cache " + id);
-            return productFromCache;
+    public List<Product> getAll() {
+        List<Product> cached = productCache.getAll();
+        if (cached.isEmpty()) {
+            return productRepository.findAll();
         }
-        Product productFromDb = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product is not found"));
-        log.info("Product return from DB " + id);
-        ProductCache.put(productFromDb.getId(), productFromDb);
-        return productFromDb;
+        return cached;
+
+    }
+
+    public Product get(final Long id) {
+        Product product = getProduct(id);
+        productCache.put(product.getId(), product);
+        return product;
     }
 
     @Transactional
@@ -60,6 +65,7 @@ public class ProductService {
         product.setPrice(newPrice);
 
         log.info("Product price is changed");
+        publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.UPDATED));
         return saveProduct(product);
     }
 
@@ -84,11 +90,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(Long id) {
+    public void deleteProduct(final Long id) {
 
         Product product = getProduct(id);
         productRepository.deleteById(id);
-        ProductCache.evict(id);
+        productCache.evict(id);
 
 
         publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.DELETED));
@@ -97,17 +103,16 @@ public class ProductService {
 
     private Product saveProduct(final Product product) {
         Product productFromDb = productRepository.save(product);
-        ProductCache.put(productFromDb.getId(), productFromDb);
+        productCache.put(productFromDb.getId(), productFromDb);
         return productFromDb;
     }
 
     private Product getProduct(final Long id) {
-        Product product = ProductCache.get(id);
+        Product product = productCache.get(id);
 
         if (product == null) {
-            product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product is not found"));
+            product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product is not found"));
         }
         return product;
     }
-
 }

@@ -1,5 +1,5 @@
 package com.example.caching.model;
 
 public enum PurchaseStatus {
-    PURCHASED, DELETED, ADDED
+    PURCHASED, DELETED, ADDED, UPDATED
 }

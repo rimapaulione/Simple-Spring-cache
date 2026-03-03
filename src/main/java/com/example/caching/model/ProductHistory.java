@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class ProductHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String productName;
-    private Date timeStamp;
+    private LocalDateTime timestamp;
     @Enumerated(EnumType.STRING)
     private PurchaseStatus status;
 

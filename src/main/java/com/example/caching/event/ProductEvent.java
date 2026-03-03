@@ -8,7 +8,6 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-@Builder
 
 public class ProductEvent {
 

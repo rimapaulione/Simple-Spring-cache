@@ -1,27 +1,37 @@
 package com.example.caching.service;
 
 import com.example.caching.model.Product;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+@Component
 public class ProductCache {
-    private static final Map<Long, Product> CACHE = new ConcurrentHashMap<>();
+    private final Map<Long, Product> cache = new ConcurrentHashMap<>();
 
 
-    public static void put(final Long id, final Product product) {
-        CACHE.put(id, product);
+    public void put(final Long id, final Product product) {
+        cache.put(id, product);
     }
 
-    public static Product get(final Long id) {
-        return CACHE.get(id);
+    public Product get(final Long id) {
+        return cache.get(id);
     }
 
-    public static void evict(final Long id) {
-        CACHE.remove(id);
+    public void evict(final Long id) {
+        cache.remove(id);
     }
 
-    public static void clear() {
-        CACHE.clear();
+    public void clear() {
+        cache.clear();
+    }
+
+    public List<Product> getAll() {
+
+        return List.copyOf(cache.values());
     }
 }
