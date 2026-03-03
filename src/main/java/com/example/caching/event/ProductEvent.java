@@ -3,7 +3,6 @@ package com.example.caching.event;
 
 import com.example.caching.model.PurchaseStatus;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 @AllArgsConstructor

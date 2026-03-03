@@ -1,6 +1,7 @@
 package com.example.caching.service;
 
 import com.example.caching.event.ProductEvent;
+import com.example.caching.event.StockEvent;
 import com.example.caching.model.Product;
 import com.example.caching.model.PurchaseStatus;
 import com.example.caching.repository.ProductRepository;
@@ -22,6 +23,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher publisher;
     private final ProductCache productCache;
+    private final int MIN_STOCK = 5;
 
     @Transactional
     public Product create(final String name, final Double price, final Integer quantity) {
@@ -30,11 +32,14 @@ public class ProductService {
                 .price(price)
                 .quantity(quantity)
                 .build());
+
         log.info("Product was created");
         productCache.put(product.getId(), product);
-
-
         publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.ADDED));
+
+        if (product.getQuantity() < MIN_STOCK) {
+            publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));
+        }
 
         return product;
     }
@@ -83,6 +88,10 @@ public class ProductService {
         product.setQuantity(product.getQuantity() - amount);
 
         publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.PURCHASED));
+
+        if (product.getQuantity() < MIN_STOCK) {
+            publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));
+        }
 
         log.info("Product quantity is changed");
 

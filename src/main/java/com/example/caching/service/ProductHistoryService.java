@@ -2,10 +2,12 @@ package com.example.caching.service;
 
 
 import com.example.caching.model.ProductHistory;
+import com.example.caching.model.PurchaseStatus;
 import com.example.caching.repository.ProductHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,9 +16,17 @@ public class ProductHistoryService {
 
     private final ProductHistoryRepository productHistoryRepository;
 
-    public List<ProductHistory> getAll() {
-        return productHistoryRepository.findAll();
 
+    public List<ProductHistory> getAll(final String status) {
+        if (status == null) {
+            return productHistoryRepository.findAll();
+        }
+        return productHistoryRepository.findByStatus(PurchaseStatus.valueOf(status.toUpperCase()));
     }
+
+    public List<ProductHistory> getByDateRange(LocalDateTime start, LocalDateTime end) {
+        return productHistoryRepository.findByTimestampBetween(start, end);
+    }
+
 }
 
