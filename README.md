@@ -54,6 +54,24 @@ Combines `ConcurrentHashMap` caching with Spring's event system (`ApplicationEve
 - `/products` - CRUD + purchase operations
 - `/products/history` - view product history, filter by status or date range
 
+## Tests
+
+Unit tests using **JUnit 5** and **Mockito**.
+
+- `UserCacheTest` - tests for static cache operations (put, get, getAll, evict, clear)
+- `UserServiceTest` - tests with mocked repository, verifies cache hit/miss behavior
+- `ProductCacheTest` - tests for `@Component` cache (put, get, getAll, evict, clear, overwrite)
+- `ProductServiceTest` - tests with mocked repository, cache, and event publisher:
+    - CRUD operations (create, get, update, delete)
+    - Cache hit vs DB fallback
+    - Event publishing verification (`ProductEvent`, `StockEvent`)
+    - Validation (invalid price, negative amounts, exceeding quantity)
+    - Exception handling (product not found)
+
+```bash
+./mvnw test
+```
+
 ## Running
 
 ```bash
