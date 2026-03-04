@@ -7,7 +7,6 @@ import com.example.caching.model.StockAlert;
 import com.example.caching.repository.ProductHistoryRepository;
 import com.example.caching.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +15,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.time.LocalDateTime;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
-import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 @Component
 @RequiredArgsConstructor
@@ -29,8 +27,6 @@ public class ProductListener {
     @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener
     public void productHistoryEvent(ProductEvent event) {
-
-        log.info("EVENT RECEIVED");
         productHistoryRepository.save(ProductHistory.builder()
                 .productName(event.getProductName())
                 .timestamp(LocalDateTime.now())

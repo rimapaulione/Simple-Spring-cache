@@ -17,12 +17,13 @@ public class ProductHistoryService {
     private final ProductHistoryRepository productHistoryRepository;
 
 
-    public List<ProductHistory> getAll(final String status) {
+    public List<ProductHistory> getAll(final PurchaseStatus status) {
         if (status == null) {
             return productHistoryRepository.findAll();
         }
-        return productHistoryRepository.findByStatus(PurchaseStatus.valueOf(status.toUpperCase()));
+        return productHistoryRepository.findByStatus(status);
     }
+
 
     public List<ProductHistory> getByDateRange(LocalDateTime start, LocalDateTime end) {
         return productHistoryRepository.findByTimestampBetween(start, end);

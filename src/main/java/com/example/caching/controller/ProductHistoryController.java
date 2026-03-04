@@ -2,6 +2,7 @@ package com.example.caching.controller;
 
 
 import com.example.caching.model.ProductHistory;
+import com.example.caching.model.PurchaseStatus;
 import com.example.caching.service.ProductHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ public class ProductHistoryController {
     private final ProductHistoryService productHistoryService;
 
     @GetMapping
-    public List<ProductHistory> getAll(@RequestParam(required = false) String status) {
+    public List<ProductHistory> getAll(@RequestParam(required = false) PurchaseStatus status) {
         return productHistoryService.getAll(status);
     }
 

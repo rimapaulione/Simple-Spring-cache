@@ -1,8 +1,10 @@
 package com.example.caching.controller;
 
 
+import com.example.caching.dto.CreateProductRequest;
 import com.example.caching.model.Product;
 import com.example.caching.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +28,8 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody final Product product) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(product.getName(), product.getPrice(), product.getQuantity()));
+    public ResponseEntity<Product> create(@Valid  @RequestBody  final CreateProductRequest createProductRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(createProductRequest));
     }
 
     @GetMapping
@@ -49,6 +51,12 @@ public class ProductController {
     public Product reduceQuantity(@PathVariable final Long id, @RequestParam final int amount) {
         return productService.reduceQuantity(id, amount);
     }
+
+    @PostMapping("/{id}/restock")
+    public Product extendQuantity(@PathVariable final Long id, @RequestBody final int amount) {
+        return productService.extendQuantity(id, amount);
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {

@@ -1,5 +1,6 @@
 package com.example.caching;
 
+import com.example.caching.dto.CreateProductRequest;
 import com.example.caching.service.ProductService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,8 +20,9 @@ public class CachingApplication {
     @Bean
     public CommandLineRunner demo(ProductService productService) {
         return args -> {
-            productService.create("Duona", 2.99, 50);
-            productService.create("Suris", 3.99, 10);
+            productService.create(new CreateProductRequest("Duona", 2.99, 50));
+            productService.create(new CreateProductRequest("Suris", 2.99, 50));
+            productService.create(new CreateProductRequest("Pienas", 2.99, 50));
 
             System.out.println("Demo run complete");
         };
