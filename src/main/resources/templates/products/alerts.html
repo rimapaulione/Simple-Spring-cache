@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Stock Alerts')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Stock Alerts</h1>
+    </div>
+
+    <div class="card">
+        <div th:if="${#lists.isEmpty(alerts)}" class="empty-state">
+            <p>No stock alerts</p>
+            <span class="text-muted">Alerts appear when product stock drops below the minimum threshold</span>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(alerts)}">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Remaining Qty</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="alert : ${alerts}">
+                    <td>
+                        <a th:href="@{/ui/products/{id}(id=${alert.productId()})}" class="product-name-link" th:text="${alert.productName()}">Product</a>
+                    </td>
+                    <td>
+                        <span class="badge badge-danger" th:if="${alert.remainingQuantity() == 0}" th:text="'0 - Out of Stock'">0</span>
+                        <span class="badge badge-warning" th:if="${alert.remainingQuantity() > 0}" th:text="${alert.remainingQuantity() + ' remaining'}">5</span>
+                    </td>
+                    <td th:text="${#temporals.format(alert.timestamp(), 'yyyy-MM-dd HH:mm:ss')}">2026-01-01</td>
+                    <td class="text-right">
+                        <a th:href="@{/ui/products/{id}(id=${alert.productId()})}" class="btn btn-outline btn-sm">View Product</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

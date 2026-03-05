@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Product History')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Product History</h1>
+    </div>
+
+    <form th:action="@{/ui/products/history}" method="get" class="filter-bar">
+        <div class="form-group">
+            <label>Filter by status</label>
+            <select name="status" class="form-control">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.name()}" th:selected="${s.name() == selectedStatus}">STATUS</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-outline">Filter</button>
+        <a th:href="@{/ui/products/history}" class="btn btn-outline">Clear</a>
+    </form>
+
+    <div class="card">
+        <div th:if="${#lists.isEmpty(historyList)}" class="empty-state">
+            <p>No history records found</p>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(historyList)}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="h : ${historyList}">
+                    <td class="text-muted" th:text="${h.id()}">#</td>
+                    <td>
+                        <a th:href="@{/ui/products/{id}(id=${h.productId()})}" class="product-name-link" th:text="${h.productName()}">Product</a>
+                    </td>
+                    <td>
+                        <span class="badge badge-success" th:if="${h.status().name() == 'ADDED'}">Added</span>
+                        <span class="badge badge-info" th:if="${h.status().name() == 'PURCHASED'}">Purchased</span>
+                        <span class="badge badge-info" th:if="${h.status().name() == 'UPDATED'}">Updated</span>
+                        <span class="badge badge-success" th:if="${h.status().name() == 'RESTOCKED'}">Restocked</span>
+                        <span class="badge badge-danger" th:if="${h.status().name() == 'DELETED'}">Deleted</span>
+                    </td>
+                    <td th:text="${#temporals.format(h.timestamp(), 'yyyy-MM-dd HH:mm:ss')}">2026-01-01</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
