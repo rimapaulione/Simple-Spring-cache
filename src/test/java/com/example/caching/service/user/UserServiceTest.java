@@ -1,9 +1,9 @@
 package com.example.caching.service.user;
 
-import com.example.caching.model.User;
-import com.example.caching.repository.UserRepository;
-import com.example.caching.service.UserCache;
-import com.example.caching.service.UserService;
+import com.example.caching.user.User;
+import com.example.caching.user.UserCache;
+import com.example.caching.user.UserRepository;
+import com.example.caching.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

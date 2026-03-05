@@ -1,7 +1,7 @@
 package com.example.caching;
 
-import com.example.caching.dto.CreateProductRequest;
-import com.example.caching.service.ProductService;
+import com.example.caching.product.dto.CreateProductRequest;
+import com.example.caching.product.service.ProductService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

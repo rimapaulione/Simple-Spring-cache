@@ -1,12 +1,12 @@
 package com.example.caching.service.product;
 
-import com.example.caching.dto.CreateProductRequest;
-import com.example.caching.event.ProductEvent;
-import com.example.caching.event.StockEvent;
-import com.example.caching.model.Product;
-import com.example.caching.repository.ProductRepository;
-import com.example.caching.service.ProductCache;
-import com.example.caching.service.ProductService;
+import com.example.caching.product.dto.CreateProductRequest;
+import com.example.caching.product.event.ProductEvent;
+import com.example.caching.product.event.StockEvent;
+import com.example.caching.product.model.Product;
+import com.example.caching.product.repository.ProductRepository;
+import com.example.caching.product.service.ProductCache;
+import com.example.caching.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

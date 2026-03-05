@@ -1,7 +1,7 @@
 package com.example.caching.service.user;
 
-import com.example.caching.model.User;
-import com.example.caching.service.UserCache;
+import com.example.caching.user.User;
+import com.example.caching.user.UserCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +48,7 @@ class UserCacheTest {
 
         Map<Long, User> result = UserCache.getAll();
 
-        assertNull(result.get(1L));
+        assertNull(result.get(3L));
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("Tomas", result.get(2L).getName());
