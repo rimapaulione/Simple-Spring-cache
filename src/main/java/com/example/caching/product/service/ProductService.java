@@ -1,6 +1,7 @@
 package com.example.caching.product.service;
 
 import com.example.caching.product.dto.CreateProductRequest;
+import com.example.caching.product.dto.ProductResponse;
 import com.example.caching.product.event.ProductEvent;
 import com.example.caching.product.event.StockEvent;
 import com.example.caching.product.model.Product;
@@ -27,7 +28,7 @@ public class ProductService {
     private static final int MIN_STOCK = 5;
 
     @Transactional
-    public Product create(final CreateProductRequest createProductRequest) {
+    public ProductResponse create(final CreateProductRequest createProductRequest) {
         Product product = this.saveProduct(Product.builder()
                 .name(createProductRequest.name())
                 .price(createProductRequest.price())
@@ -38,23 +39,38 @@ public class ProductService {
 
         this.callEvents(product, PurchaseStatus.ADDED);
 
-        return product;
+        return ProductResponse.from(product);
     }
 
-    public List<Product> getAll() {
+    public List<ProductResponse> getAll() {
         List<Product> cached = productCache.getAll();
         if (cached.isEmpty()) {
-            return productRepository.findAll();
+            return productRepository.findAll().stream().map(ProductResponse::from).toList();
         }
-        return cached;
+        return cached.stream().map(ProductResponse::from).toList();
     }
 
-    public Product get(final Long id) {
-        return getProduct(id);
+    public ProductResponse get(final Long id) {
+        return ProductResponse.from(getProduct(id));
     }
 
     @Transactional
-    public Product updatePrice(final Long id, final Double newPrice) {
+    public ProductResponse updateName(Long id, String newName) {
+        if (newName == null || newName.isBlank()) {
+            throw new IllegalArgumentException("Name must not be blank");
+        }
+        Product product = getProduct(id);
+        product.setName(newName);
+
+        Product savedProduct = this.saveProduct(product);
+
+        log.info("Product name updated for id: {}", id);
+        this.callEvents(savedProduct, PurchaseStatus.UPDATED);
+        return ProductResponse.from(savedProduct);
+    }
+
+    @Transactional
+    public ProductResponse updatePrice(final Long id, final Double newPrice) {
 
         if (newPrice == null || newPrice <= 0) {
             throw new IllegalArgumentException("Price must be positive number");
@@ -67,11 +83,11 @@ public class ProductService {
 
         log.info("Product price updated for id: {}", id);
         this.callEvents(savedProduct, PurchaseStatus.UPDATED);
-        return savedProduct;
+        return ProductResponse.from(savedProduct);
     }
 
     @Transactional
-    public Product reduceQuantity(final Long id, final int amount) {
+    public ProductResponse reduceQuantity(final Long id, final int amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must to be positive number");
         }
@@ -88,11 +104,11 @@ public class ProductService {
 
         this.callEvents(savedProduct, PurchaseStatus.PURCHASED);
 
-        return savedProduct;
+        return ProductResponse.from(savedProduct);
     }
 
     @Transactional
-    public Product extendQuantity(final Long id, final int amount) {
+    public ProductResponse extendQuantity(final Long id, final int amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount have to be positive number");
         }
@@ -103,7 +119,7 @@ public class ProductService {
 
         log.info("Product amount updated for id: {}", id);
         this.callEvents(savedProduct, PurchaseStatus.UPDATED);
-        return savedProduct;
+        return ProductResponse.from(savedProduct);
     }
 
     @Transactional
@@ -140,4 +156,6 @@ public class ProductService {
             publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));
         }
     }
+
+
 }

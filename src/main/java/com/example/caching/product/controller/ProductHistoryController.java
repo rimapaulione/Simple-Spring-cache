@@ -1,10 +1,11 @@
 package com.example.caching.product.controller;
 
 
-import com.example.caching.product.model.ProductHistory;
+import com.example.caching.product.dto.ProductHistoryResponse;
 import com.example.caching.product.model.PurchaseStatus;
 import com.example.caching.product.service.ProductHistoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,16 +24,15 @@ public class ProductHistoryController {
     private final ProductHistoryService productHistoryService;
 
     @GetMapping
-    public List<ProductHistory> getAll(@RequestParam(required = false) PurchaseStatus status) {
-        return productHistoryService.getAll(status);
+    public ResponseEntity<List<ProductHistoryResponse>> getAll(@RequestParam(required = false) PurchaseStatus status) {
+        return ResponseEntity.ok().body(productHistoryService.getAll(status));
     }
 
     @GetMapping("/range")
-    public List<ProductHistory> getByDateRange(
+    public ResponseEntity<List<ProductHistoryResponse>> getByDateRange(
             @RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end) {
         LocalDateTime startDateTime = start.atStartOfDay();
         LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
-        return productHistoryService.getByDateRange(startDateTime, endDateTime);
-
+        return ResponseEntity.ok().body(productHistoryService.getByDateRange(startDateTime, endDateTime));
     }
 }

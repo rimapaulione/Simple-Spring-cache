@@ -1,8 +1,10 @@
 package com.example.caching.product.controller;
 
-
 import com.example.caching.product.dto.CreateProductRequest;
-import com.example.caching.product.model.Product;
+import com.example.caching.product.dto.ProductResponse;
+import com.example.caching.product.dto.QuantityRequest;
+import com.example.caching.product.dto.UpdateNameRequest;
+import com.example.caching.product.dto.UpdatePriceRequest;
 import com.example.caching.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,33 +29,39 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> create(@Valid  @RequestBody  final CreateProductRequest createProductRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(createProductRequest));
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody final CreateProductRequest createProductRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productService.create(createProductRequest));
     }
 
     @GetMapping
-    public List<Product> getAll() {
-        return productService.getAll();
+    public ResponseEntity<List<ProductResponse>> getAll() {
+        return ResponseEntity.ok().body(productService.getAll());
     }
 
     @GetMapping("/{id}")
-    public Product get(@PathVariable final Long id) {
-        return productService.get(id);
+    public ResponseEntity<ProductResponse> get(@PathVariable final Long id) {
+        return ResponseEntity.ok().body(productService.get(id));
+    }
+
+    @PutMapping("/{id}/name")
+    public ResponseEntity<ProductResponse> updateName(@PathVariable final Long id, @Valid @RequestBody final UpdateNameRequest request) {
+        return ResponseEntity.ok().body(productService.updateName(id, request.name()));
     }
 
     @PutMapping("/{id}/price")
-    public Product updatePrice(@PathVariable final Long id, @RequestBody final Double price) {
-        return productService.updatePrice(id, price);
+    public ResponseEntity<ProductResponse> updatePrice(@PathVariable final Long id, @Valid @RequestBody final UpdatePriceRequest request) {
+        return ResponseEntity.ok().body(productService.updatePrice(id, request.price()));
     }
 
     @PostMapping("/{id}/purchase")
-    public Product reduceQuantity(@PathVariable final Long id, @RequestParam final int amount) {
-        return productService.reduceQuantity(id, amount);
+    public ResponseEntity<ProductResponse> reduceQuantity(@PathVariable final Long id, @Valid @RequestBody final QuantityRequest request) {
+        return ResponseEntity.ok(productService.reduceQuantity(id, request.amount()));
     }
 
     @PostMapping("/{id}/restock")
-    public Product extendQuantity(@PathVariable final Long id, @RequestBody final int amount) {
-        return productService.extendQuantity(id, amount);
+    public ResponseEntity<ProductResponse> extendQuantity(@PathVariable final Long id, @Valid @RequestBody final QuantityRequest request) {
+        return ResponseEntity.ok().body(productService.extendQuantity(id, request.amount()));
     }
 
     @DeleteMapping("/{id}")
