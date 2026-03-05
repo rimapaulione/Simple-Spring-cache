@@ -2,6 +2,8 @@ package com.example.caching.product.dto;
 
 import com.example.caching.product.model.Product;
 
+import static com.example.caching.product.util.ProductConstants.MIN_STOCK;
+
 public record ProductResponse(
         Long id,
         String name,
@@ -9,8 +11,6 @@ public record ProductResponse(
         Integer quantity,
         String stockStatus
 ) {
-    private static final int MIN_STOCK = 5;
-
     public static ProductResponse from(Product product) {
         return new ProductResponse(
                 product.getId(),

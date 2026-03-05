@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+import static com.example.caching.product.util.ProductConstants.MIN_STOCK;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +27,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher publisher;
     private final ProductCache productCache;
-    private static final int MIN_STOCK = 5;
 
     @Transactional
     public ProductResponse create(final CreateProductRequest createProductRequest) {
@@ -42,12 +43,23 @@ public class ProductService {
         return ProductResponse.from(product);
     }
 
-    public List<ProductResponse> getAll() {
-        List<Product> cached = productCache.getAll();
-        if (cached.isEmpty()) {
-            return productRepository.findAll().stream().map(ProductResponse::from).toList();
+    public List<ProductResponse> getAll(String name, String stockStatus) {
+        List<Product> products;
+
+        products = productCache.getAll();
+        if (products.isEmpty()) {
+            products = productRepository.findAll();
         }
-        return cached.stream().map(ProductResponse::from).toList();
+        if (name != null) {
+            products = products.stream().filter(p -> p.getName().toLowerCase().contains(name.toLowerCase())).toList();
+        }
+
+        List<ProductResponse> responses = products.stream().map(ProductResponse::from).toList();
+
+        if (stockStatus != null) {
+            responses = responses.stream().filter(r -> r.stockStatus().toLowerCase().contains(stockStatus.toLowerCase())).toList();
+        }
+        return responses;
     }
 
     public ProductResponse get(final Long id) {
@@ -156,6 +168,4 @@ public class ProductService {
             publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));
         }
     }
-
-
 }

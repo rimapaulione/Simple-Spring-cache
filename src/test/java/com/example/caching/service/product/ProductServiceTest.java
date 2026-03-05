@@ -77,7 +77,7 @@ class ProductServiceTest {
 
         when(productCache.getAll()).thenReturn(List.of(product));
 
-        List<ProductResponse> result = productService.getAll();
+        List<ProductResponse> result = productService.getAll(null, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -92,13 +92,72 @@ class ProductServiceTest {
 
         when(productRepository.findAll()).thenReturn(List.of(product));
 
-        List<ProductResponse> result = productService.getAll();
+        List<ProductResponse> result = productService.getAll(null, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Bread", result.get(0).name());
         verify(productCache).getAll();
         verify(productRepository).findAll();
+    }
+
+    @Test
+    void test_shouldFilterProductsByName() {
+        Product bread = new Product(1L, "Bread", 1.99, 5);
+        Product milk = new Product(2L, "Milk", 3.99, 10);
+
+        when(productCache.getAll()).thenReturn(List.of(bread, milk));
+
+        List<ProductResponse> result = productService.getAll("Bread", null);
+
+        assertEquals(1, result.size());
+        assertEquals("Bread", result.get(0).name());
+    }
+
+    @Test
+    void test_shouldReturnEmptyListWhenNoNameMatch() {
+        Product bread = new Product(1L, "Bread", 1.99, 5);
+
+        when(productCache.getAll()).thenReturn(List.of(bread));
+
+        List<ProductResponse> result = productService.getAll("Cheese", null);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void test_shouldFilterByStockStatus() {
+        Product inStock = new Product(1L, "Bread", 1.99, 10);
+        Product lowStock = new Product(2L, "Milk", 3.99, 3);
+        Product outOfStock = new Product(3L, "Cheese", 5.99, 0);
+
+        when(productCache.getAll()).thenReturn(List.of(inStock, lowStock, outOfStock));
+
+        List<ProductResponse> inStockResult = productService.getAll(null, "IN_STOCK");
+        assertEquals(1, inStockResult.size());
+        assertEquals("Bread", inStockResult.get(0).name());
+
+        List<ProductResponse> lowStockResult = productService.getAll(null, "LOW_STOCK");
+        assertEquals(1, lowStockResult.size());
+        assertEquals("Milk", lowStockResult.get(0).name());
+
+        List<ProductResponse> outOfStockResult = productService.getAll(null, "OUT_OF_STOCK");
+        assertEquals(1, outOfStockResult.size());
+        assertEquals("Cheese", outOfStockResult.get(0).name());
+    }
+
+    @Test
+    void test_shouldFilterByNameAndStockStatus() {
+        Product bread = new Product(1L, "Bread", 1.99, 10);
+        Product breadLow = new Product(2L, "Bread rolls", 2.99, 2);
+        Product milk = new Product(3L, "Milk", 3.99, 3);
+
+        when(productCache.getAll()).thenReturn(List.of(bread, breadLow, milk));
+
+        List<ProductResponse> result = productService.getAll("Bread", "LOW_STOCK");
+
+        assertEquals(1, result.size());
+        assertEquals("Bread rolls", result.get(0).name());
     }
 
     @Test

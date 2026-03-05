@@ -23,6 +23,8 @@ public class CachingApplication {
             productService.create(new CreateProductRequest("Duona", 2.99, 50));
             productService.create(new CreateProductRequest("Suris", 2.99, 50));
             productService.create(new CreateProductRequest("Pienas", 2.99, 50));
+            productService.create(new CreateProductRequest("Duona balta", 2.99, 2));
+            productService.create(new CreateProductRequest("Pienelis ", 2.99, 0));
 
             System.out.println("Demo run complete");
         };
