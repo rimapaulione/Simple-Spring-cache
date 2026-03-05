@@ -3,6 +3,7 @@ package com.example.caching.product.controller;
 import com.example.caching.product.dto.CreateProductRequest;
 import com.example.caching.product.dto.ProductResponse;
 import com.example.caching.product.dto.QuantityRequest;
+import com.example.caching.product.dto.StatisticsResponse;
 import com.example.caching.product.dto.UpdateNameRequest;
 import com.example.caching.product.dto.UpdatePriceRequest;
 import com.example.caching.product.service.ProductService;
@@ -45,6 +46,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> get(@PathVariable final Long id) {
         return ResponseEntity.ok().body(productService.get(id));
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<StatisticsResponse> getStatistics(){
+        return ResponseEntity.ok().body(productService.getStatistics());
     }
 
     @PutMapping("/{id}/name")

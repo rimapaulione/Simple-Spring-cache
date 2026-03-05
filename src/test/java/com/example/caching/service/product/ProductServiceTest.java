@@ -2,6 +2,7 @@ package com.example.caching.service.product;
 
 import com.example.caching.product.dto.CreateProductRequest;
 import com.example.caching.product.dto.ProductResponse;
+import com.example.caching.product.dto.StatisticsResponse;
 import com.example.caching.product.event.ProductEvent;
 import com.example.caching.product.event.StockEvent;
 import com.example.caching.product.model.Product;
@@ -321,6 +322,22 @@ class ProductServiceTest {
                 () -> productService.extendQuantity(1L, -5));
 
         verify(productRepository, never()).save(any());
+    }
+
+    @Test
+    void test_shouldReturnStatistics() {
+        Product inStock = new Product(1L, "Bread", 2.00, 10);
+        Product lowStock = new Product(2L, "Milk", 3.00, 3);
+        Product outOfStock = new Product(3L, "Cheese", 5.00, 0);
+
+        when(productRepository.findAll()).thenReturn(List.of(inStock, lowStock, outOfStock));
+
+        StatisticsResponse result = productService.getStatistics();
+
+        assertEquals(3, result.totalCount());
+        assertEquals(29.0, result.inventoryValue());
+        assertEquals(1, result.lowStockCount());
+        assertEquals(1, result.outOfStockCount());
     }
 
     @Test

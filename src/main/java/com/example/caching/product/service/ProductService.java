@@ -2,6 +2,7 @@ package com.example.caching.product.service;
 
 import com.example.caching.product.dto.CreateProductRequest;
 import com.example.caching.product.dto.ProductResponse;
+import com.example.caching.product.dto.StatisticsResponse;
 import com.example.caching.product.event.ProductEvent;
 import com.example.caching.product.event.StockEvent;
 import com.example.caching.product.model.Product;
@@ -28,7 +29,7 @@ public class ProductService {
     private final ApplicationEventPublisher publisher;
     private final ProductCache productCache;
 
-    @Transactional
+
     public ProductResponse create(final CreateProductRequest createProductRequest) {
         Product product = this.saveProduct(Product.builder()
                 .name(createProductRequest.name())
@@ -57,13 +58,33 @@ public class ProductService {
         List<ProductResponse> responses = products.stream().map(ProductResponse::from).toList();
 
         if (stockStatus != null) {
-            responses = responses.stream().filter(r -> r.stockStatus().toLowerCase().contains(stockStatus.toLowerCase())).toList();
+            responses = responses.stream().filter(r -> r.stockStatus().equalsIgnoreCase(stockStatus)).toList();
         }
         return responses;
     }
 
     public ProductResponse get(final Long id) {
         return ProductResponse.from(getProduct(id));
+    }
+
+    public StatisticsResponse getStatistics() {
+        List<Product> products = productRepository.findAll();
+
+        long totalCount = products.size();
+        double inventoryValue = products.stream()
+                .mapToDouble(p -> p.getPrice() * p.getQuantity())
+                .sum();
+
+        long lowStockCount = products.stream()
+                .filter(p -> p.getQuantity() > 0 && p.getQuantity() < MIN_STOCK)
+                .count();
+
+        long outOfStockCount = products.stream()
+                .filter(p -> p.getQuantity() == 0)
+                .count();
+
+
+        return new StatisticsResponse(totalCount, inventoryValue, lowStockCount, outOfStockCount);
     }
 
     @Transactional
@@ -168,4 +189,6 @@ public class ProductService {
             publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));
         }
     }
+
+
 }
