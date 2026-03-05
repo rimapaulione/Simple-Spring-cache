@@ -10,6 +10,7 @@ import lombok.Data;
 
 public class ProductEvent {
 
+    private final Long productId;
     private final String productName;
     private final PurchaseStatus status;
 

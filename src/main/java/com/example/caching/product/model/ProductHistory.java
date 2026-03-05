@@ -23,6 +23,7 @@ public class ProductHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long productId;
     private String productName;
     private LocalDateTime timestamp;
     @Enumerated(EnumType.STRING)

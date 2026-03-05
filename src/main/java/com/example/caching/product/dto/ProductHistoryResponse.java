@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 public record ProductHistoryResponse(
         Long id,
+        Long productId,
         String productName,
         LocalDateTime timestamp,
         PurchaseStatus status
@@ -14,6 +15,7 @@ public record ProductHistoryResponse(
     public static ProductHistoryResponse from(ProductHistory history) {
         return new ProductHistoryResponse(
                 history.getId(),
+                history.getProductId(),
                 history.getProductName(),
                 history.getTimestamp(),
                 history.getStatus()

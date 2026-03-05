@@ -151,7 +151,7 @@ public class ProductService {
         Product savedProduct = this.saveProduct(product);
 
         log.info("Product amount updated for id: {}", id);
-        this.callEvents(savedProduct, PurchaseStatus.UPDATED);
+        this.callEvents(savedProduct, PurchaseStatus.RESTOCKED);
         return ProductResponse.from(savedProduct);
     }
 
@@ -162,7 +162,7 @@ public class ProductService {
         productRepository.deleteById(id);
         productCache.evict(id);
 
-        publisher.publishEvent(new ProductEvent(product.getName(), PurchaseStatus.DELETED));
+        publisher.publishEvent(new ProductEvent(product.getId(), product.getName(), PurchaseStatus.DELETED));
 
         log.info("Product was deleted: {}", product.getId());
     }
@@ -183,7 +183,7 @@ public class ProductService {
     }
 
     private void callEvents(Product product, PurchaseStatus status) {
-        publisher.publishEvent(new ProductEvent(product.getName(), status));
+        publisher.publishEvent(new ProductEvent(product.getId(), product.getName(), status));
 
         if (product.getQuantity() < MIN_STOCK) {
             publisher.publishEvent(new StockEvent(product.getId(), product.getName(), product.getQuantity()));

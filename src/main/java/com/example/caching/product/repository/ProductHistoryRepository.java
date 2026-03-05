@@ -14,4 +14,6 @@ public interface ProductHistoryRepository extends JpaRepository<ProductHistory, 
     List<ProductHistory> findByStatus(PurchaseStatus status);
 
     List<ProductHistory> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
+
+    List<ProductHistory> findByProductId(Long productId);
 }

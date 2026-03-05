@@ -1,6 +1,5 @@
 package com.example.caching.product.service;
 
-
 import com.example.caching.product.dto.ProductHistoryResponse;
 import com.example.caching.product.model.PurchaseStatus;
 import com.example.caching.product.repository.ProductHistoryRepository;
@@ -16,7 +15,6 @@ public class ProductHistoryService {
 
     private final ProductHistoryRepository productHistoryRepository;
 
-
     public List<ProductHistoryResponse> getAll(final PurchaseStatus status) {
         if (status == null) {
             return productHistoryRepository.findAll().stream().map(ProductHistoryResponse::from).toList();
@@ -24,9 +22,11 @@ public class ProductHistoryService {
         return productHistoryRepository.findByStatus(status).stream().map(ProductHistoryResponse::from).toList();
     }
 
-
     public List<ProductHistoryResponse> getByDateRange(LocalDateTime start, LocalDateTime end) {
         return productHistoryRepository.findByTimestampBetween(start, end).stream().map(ProductHistoryResponse::from).toList();
     }
 
+    public List<ProductHistoryResponse> getHistory(Long productId) {
+        return productHistoryRepository.findByProductId(productId).stream().map(ProductHistoryResponse::from).toList();
+    }
 }

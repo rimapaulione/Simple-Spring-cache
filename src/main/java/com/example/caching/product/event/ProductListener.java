@@ -26,6 +26,7 @@ public class ProductListener {
     @TransactionalEventListener
     public void productHistoryEvent(ProductEvent event) {
         productHistoryRepository.save(ProductHistory.builder()
+                .productId(event.getProductId())
                 .productName(event.getProductName())
                 .timestamp(LocalDateTime.now())
                 .status(event.getStatus())
