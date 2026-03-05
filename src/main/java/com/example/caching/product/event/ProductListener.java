@@ -3,7 +3,7 @@ package com.example.caching.product.event;
 import com.example.caching.product.model.ProductHistory;
 import com.example.caching.product.model.StockAlert;
 import com.example.caching.product.repository.ProductHistoryRepository;
-import com.example.caching.product.repository.StockRepository;
+import com.example.caching.product.repository.AlertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 public class ProductListener {
 
     private final ProductHistoryRepository productHistoryRepository;
-    private final StockRepository stockRepository;
+    private final AlertRepository stockRepository;
 
     @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener
