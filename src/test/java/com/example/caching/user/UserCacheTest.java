@@ -1,4 +1,4 @@
-package com.example.caching.service.user;
+package com.example.caching.user;
 
 import com.example.caching.user.User;
 import com.example.caching.user.UserCache;

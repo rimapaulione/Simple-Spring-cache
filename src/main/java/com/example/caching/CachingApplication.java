@@ -5,11 +5,11 @@ import com.example.caching.product.service.ProductService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
-@EnableCaching
+//@EnableCaching
 
 public class CachingApplication {
 
@@ -17,6 +17,7 @@ public class CachingApplication {
         SpringApplication.run(CachingApplication.class, args);
     }
 
+    @Profile("!test")
     @Bean
     public CommandLineRunner demo(ProductService productService) {
         return args -> {

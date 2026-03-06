@@ -1,4 +1,4 @@
-package com.example.caching.service.product;
+package com.example.caching.product.service;
 
 import com.example.caching.product.dto.CreateProductRequest;
 import com.example.caching.product.dto.ProductResponse;
@@ -7,8 +7,6 @@ import com.example.caching.product.event.ProductEvent;
 import com.example.caching.product.event.StockEvent;
 import com.example.caching.product.model.Product;
 import com.example.caching.product.repository.ProductRepository;
-import com.example.caching.product.service.ProductCache;
-import com.example.caching.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

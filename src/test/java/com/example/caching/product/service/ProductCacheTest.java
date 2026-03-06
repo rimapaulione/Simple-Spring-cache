@@ -1,7 +1,6 @@
-package com.example.caching.service.product;
+package com.example.caching.product.service;
 
 import com.example.caching.product.model.Product;
-import com.example.caching.product.service.ProductCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

@@ -31,7 +31,7 @@ public class ProductHistoryController {
 
     @GetMapping("/{productId}")
     public ResponseEntity<List<ProductHistoryResponse>> get(@PathVariable final Long productId) {
-        return ResponseEntity.ok().body(productHistoryService.getHistory(productId));
+        return ResponseEntity.ok().body(productHistoryService.get(productId));
     }
 
     @GetMapping("/range")

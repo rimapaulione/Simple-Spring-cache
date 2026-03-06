@@ -26,7 +26,7 @@ public class ProductHistoryService {
         return productHistoryRepository.findByTimestampBetween(start, end).stream().map(ProductHistoryResponse::from).toList();
     }
 
-    public List<ProductHistoryResponse> getHistory(Long productId) {
+    public List<ProductHistoryResponse> get(Long productId) {
         return productHistoryRepository.findByProductId(productId).stream().map(ProductHistoryResponse::from).toList();
     }
 }

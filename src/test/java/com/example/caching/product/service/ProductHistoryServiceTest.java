@@ -1,11 +1,10 @@
-package com.example.caching.service.product;
+package com.example.caching.product.service;
 
 
 import com.example.caching.product.dto.ProductHistoryResponse;
 import com.example.caching.product.model.ProductHistory;
 import com.example.caching.product.model.PurchaseStatus;
 import com.example.caching.product.repository.ProductHistoryRepository;
-import com.example.caching.product.service.ProductHistoryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -81,7 +80,7 @@ class ProductHistoryServiceTest {
 
         when(productHistoryRepository.findByProductId(1L)).thenReturn(List.of(history1, history2));
 
-        List<ProductHistoryResponse> result = productHistoryService.getHistory(1L);
+        List<ProductHistoryResponse> result = productHistoryService.get(1L);
 
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).productId());
@@ -93,7 +92,7 @@ class ProductHistoryServiceTest {
     void test_shouldReturnEmptyListWhenNoHistoryForProduct() {
         when(productHistoryRepository.findByProductId(999L)).thenReturn(List.of());
 
-        List<ProductHistoryResponse> result = productHistoryService.getHistory(999L);
+        List<ProductHistoryResponse> result = productHistoryService.get(999L);
 
         assertTrue(result.isEmpty());
         verify(productHistoryRepository).findByProductId(999L);
